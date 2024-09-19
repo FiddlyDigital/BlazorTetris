@@ -57,7 +57,7 @@
       "url": "_framework\/icudt_no_CJK.dat.br"
     },
     {
-      "hash": "sha256-Jlx++BhKpHUSaaEf5AS4TYvpv4SNJ+vKLJskgHvDwcg=",
+      "hash": "sha256-BG+WmAC0PlGZGUEglLgn7P80sIr7b+VDhpSNGK3qHAA=",
       "url": "_framework\/blazor.boot.json.br"
     },
     {
@@ -77,11 +77,11 @@
       "url": "_framework\/Blazor.Extensions.Canvas.wasm.br"
     },
     {
-      "hash": "sha256-1uUVssiWpNhnNr+BjPg4myCxCoYW8LomFQaHDrSYh7Y=",
+      "hash": "sha256-o55Hm7KMEtxRJxVz9M286XAflOFoCNHwdBoQu2n1p6Y=",
       "url": "_framework\/BlazorTetris.wasm.br"
     },
     {
-      "hash": "sha256-r62gC0CApBTscdQcB1VNoAdMDBsH8vhI7RndV\/RaePA=",
+      "hash": "sha256-FscxxOYmTyIJLeO4LuV8u7trsRWPQfrjeqF1K3WapYE=",
       "url": "_framework\/Microsoft.AspNetCore.Components.wasm.br"
     },
     {
@@ -161,7 +161,7 @@
       "url": "_framework\/System.Console.wasm.br"
     },
     {
-      "hash": "sha256-nGIvdhxTWga8GolUrAyH0E+GGombsHOvGhhryNQpM0w=",
+      "hash": "sha256-KGWdDl3T8zE5Il3OCH8OjYeyjuPveMFW72TkKwz2Lcg=",
       "url": "_framework\/System.Drawing.Primitives.wasm.br"
     },
     {
@@ -233,5 +233,5 @@
       "url": "brotliloader.min.js"
     }
   ],
-  "version": "pe138A3T"
+  "version": "VyAaMbxk"
 };
