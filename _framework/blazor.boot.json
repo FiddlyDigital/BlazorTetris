@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "BlazorTetris",
   "resources": {
-    "hash": "sha256-6JllxfPz5bd4iPGb4D2YPxG1CjB4+njlsgxyKusGCsQ=",
+    "hash": "sha256-sbXIIcMZb/4Ux+kgGdW9JTvUe4fb1BnmU2DMBGx1K54=",
     "jsModuleNative": {
       "dotnet.native.8.0.8.ub48fh4ipw.js": "sha256-mG5JRjF2O0X2urdV/5vOyeOF5uE8YFWo5Jmj1JqZVPY="
     },
@@ -19,7 +19,7 @@
     "assembly": {
       "Blazor.Extensions.Canvas.JS.wasm": "sha256-ctyeKHsvFswpiKQJpTUUWdSrDGr4UNirukOrWYnwW78=",
       "Blazor.Extensions.Canvas.wasm": "sha256-2AOrAB5tgoiK9wMMmwiE/pKPAtTjzgFudxSl6g4dt9s=",
-      "BlazorTetris.wasm": "sha256-0298IcIbI9vrHkBH8EP9KasnB5ewO3bbLefeI0DQlWo=",
+      "BlazorTetris.wasm": "sha256-C4cl8VteI54vyu1H5JYU+MQKwriPGyRNPJvYXK1Wxso=",
       "Microsoft.AspNetCore.Components.wasm": "sha256-jHmaO+Hh3hLmIo1hfcaDI14LOvp+5ZL7BPMhhFtj40A=",
       "Microsoft.AspNetCore.Components.Web.wasm": "sha256-spyk6aOlBqGuXrgkag654fMJljJemLYToKEcwC5Nvgo=",
       "Microsoft.AspNetCore.Components.WebAssembly.wasm": "sha256-Q4gQS+wAI/o1p0ABACPX+vUj06GrNg33CWKIBqv9S0w=",
