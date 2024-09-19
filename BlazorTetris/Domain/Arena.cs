@@ -31,8 +31,8 @@ namespace BlazorTetris.Domain
                         continue;
                     }
 
-                    int midY = (y + tetronimo.TetronimoPosition.Y);
-                    int midX = (x + tetronimo.TetronimoPosition.X);
+                    int midY = (y + tetronimo.Y);
+                    int midX = (x + tetronimo.X);
 
                     // if touches left or right
                     if (midX < 0 || midX >= Width)
@@ -70,7 +70,7 @@ namespace BlazorTetris.Domain
                     int val = tetronimo.Matrix[y][x];
                     if (val > 0)
                     {
-                        this.Matrix[y + tetronimo.TetronimoPosition.Y][x + tetronimo.TetronimoPosition.X] = val;
+                        this.Matrix[y + tetronimo.Y][x + tetronimo.X] = val;
                     }
                 }
             }

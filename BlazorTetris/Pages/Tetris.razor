@@ -8,10 +8,8 @@
 <PageTitle>Blazor Tetris</PageTitle>
 <h3>Blazor Tetris</h3>
 
-@if (tetronimo != null)
-{
-    <div id="score">@tetronimo.Score</div>
-}
+<div id="score">A & D to move, S to Drop, Q & E to Rotate</div>
+
 
 <BECanvas Width="240" Height="400" @ref="canvasReference"></BECanvas>
 
@@ -24,7 +22,7 @@
     private int dropCounter = 0;
     private int dropInterval = 1000;
     private int lastTime = 0;
-    private Tetronimo tetronimo;
+    private TetronimoService tetronimoService;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -37,8 +35,8 @@
         await this.outputCanvasContext.ScaleAsync(20, 20);
 
         this.arena = new Arena();
-        this.tetronimo = new Tetronimo(arena);
-        this.tetronimo.Reset();
+        this.tetronimoService = new TetronimoService(arena);
+        this.tetronimoService.Reset();
 
         await JsRuntime.InvokeAsync<object>("initGame", DotNetObjectReference.Create(this));
     }
@@ -58,7 +56,7 @@
         this.dropCounter += timeDelta;
         if (this.dropCounter >= this.dropInterval)
         {
-            this.tetronimo.DropOneRow();
+            this.tetronimoService.DropOneRow();
             this.dropCounter = 0;
         }
 
@@ -77,27 +75,27 @@
         {
             case "W": // W
             case "w": // W
-                this.tetronimo.Move(-1);
+                this.tetronimoService.Move(-1);
                 break;
             case "S": // Down
             case "s": // S
-                this.tetronimo.DropOneRow();
+                this.tetronimoService.DropOneRow();
                 break;
             case "A": // Turn Left
             case "a": // A
-                this.tetronimo.Move(-1);
+                this.tetronimoService.Move(-1);
                 break;
             case "D": // Right
             case "d": // D
-                this.tetronimo.Move(1);
+                this.tetronimoService.Move(1);
                 break;
             case "Q": // Q
             case "q":
-                this.tetronimo.Rotate(-1);
+                this.tetronimoService.Rotate(-1);
                 break;
             case "E": // E
             case "e":
-                this.tetronimo.Rotate(1);
+                this.tetronimoService.Rotate(1);
                 break;
         }
     }
@@ -111,8 +109,17 @@
     private async ValueTask DrawArenaAndTetronimo()
     {
         await this.clearCanvas();
-        await this.DrawMatrix(this.arena.Matrix, new Point(0, 0));
-        await this.DrawMatrix(this.tetronimo.Matrix, this.tetronimo.TetronimoPosition);
+        await this.DrawMatrix(
+            this.arena.Matrix, 
+            new Point(0, 0)
+        );
+        await this.DrawMatrix(
+            this.tetronimoService.CurrentTetronimo.Matrix, 
+            new Point(
+                this.tetronimoService.CurrentTetronimo.X, 
+                this.tetronimoService.CurrentTetronimo.Y
+            )
+        );
     }
 
     private async ValueTask DrawMatrix(int[][] matrix, Point offset)
