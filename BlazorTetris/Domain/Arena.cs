@@ -6,66 +6,50 @@ namespace BlazorTetris.Domain
     {
         public readonly int Width = 12;
         public readonly int Height = 20;
-
-        public int[][] matrix = null;
+        public int[][] Matrix = null;
 
         public Arena()
         {
             this.Reset();
         }
 
-        public void Reset()
-        {
-
-            matrix = this.createMatrix(Width, Height);
-        }
-
-        private int[][] createMatrix(int w, int h)
-        {
-            int[][] mat = new int[h][];
-            for (int i = 0; i < h; i++)
-            {
-                mat[i] = new int[w]; // Note: Integer arrays are initialized to 0 by default
-            }
-            return mat;
-        }
-        
         /// <summary>
-        /// 
+        /// Check if the blocks in the Tetronimo 
+        /// - overlap blocks in the arena
+        /// - or are outside of hte boundaries of the arena
         /// </summary>
-        /// <param name="player"></param>
-        /// <returns></returns>
-        public bool collides(Player player)
+        /// <param name="tetronimo"></param>
+        /// <returns>True if there is a collision, false if not</returns>
+        public bool CollidesWith(Tetronimo tetronimo)
         {
-            // Is it going beyond the bottom of the arena?
-            // Is it touching another piece?
-            // Is it touching the side of the arena?
-            for (int y = 0; y < player.matrix.Length; y++)
+            for (int y = 0; y < tetronimo.Matrix.Length; y++)
             {
-                for (int x = 0; x < player.matrix[y].Length; x++)
+                for (int x = 0; x < tetronimo.Matrix[y].Length; x++)
                 {
-                    if (player.matrix[y][x] != 0)
+                    if (tetronimo.Matrix[y][x] == 0)
                     {
-                        int midY = (y + player.pos.Y);
-                        int midX = (x + player.pos.X);
+                        continue;
+                    }
 
-                        // if touches left or right
-                        if (midX < 0 || midX >= Width)
-                        {
-                            return true;
-                        }
+                    int midY = (y + tetronimo.TetronimoPosition.Y);
+                    int midX = (x + tetronimo.TetronimoPosition.X);
 
-                        // if it hits the bototm
-                        if (midY >= Height)
-                        {
-                            return true;
-                        }
+                    // if touches left or right
+                    if (midX < 0 || midX >= Width)
+                    {
+                        return true;
+                    }
 
-                        // if touches another piece
-                        if(this.matrix[midY][midX] != 0)
-                        {
-                            return true;
-                        }
+                    // if it hits the bototm
+                    if (midY >= Height)
+                    {
+                        return true;
+                    }
+
+                    // if touches another piece
+                    if (this.Matrix[midY][midX] != 0)
+                    {
+                        return true;
                     }
                 }
             }
@@ -74,39 +58,50 @@ namespace BlazorTetris.Domain
         }
 
         /// <summary>
-        /// 
+        /// Merge the blocks of a tetronimo into the blocks of the arena
         /// </summary>
-        /// <param name="player"></param>
-        public void merge(Player player)
+        /// <param name="tetronimo"></param>
+        public void Merge(Tetronimo tetronimo)
         {
-            for (int y = 0; y < player.matrix.Length; y++) {
-                for (int x = 0; x < player.matrix[y].Length; x++)
+            for (int y = 0; y < tetronimo.Matrix.Length; y++)
+            {
+                for (int x = 0; x < tetronimo.Matrix[0].Length; x++)
                 {
-                    int val = player.matrix[y][x];
+                    int val = tetronimo.Matrix[y][x];
                     if (val > 0)
                     {
-                        this.matrix[y + player.pos.Y][x + player.pos.X] = val;
+                        this.Matrix[y + tetronimo.TetronimoPosition.Y][x + tetronimo.TetronimoPosition.X] = val;
                     }
                 }
             }
         }
 
         /// <summary>
-        /// 
+        /// Reset the Arena to a blank matrix
         /// </summary>
-        /// <param name="player"></param>
-        public int SweepAndScore()
+        public void Reset()
+        {
+            this.Matrix = new int[Height][];
+            for (int i = 0; i < Height; i++)
+            {
+                this.Matrix[i] = new int[Width]; // Note: Integer arrays are initialized to 0 by default
+            }
+        }
+
+        /// <summary>
+        /// Find and Remove rows that are completely filled by blocks, and calculate the score
+        /// </summary>
+        public int SweepAndCalculateScore()
         {
             int score = 0;
-
             int rowCount = 1;
             bool skipOut = false;
 
-            for (int y = this.matrix.Length - 1; y > 0; --y)
+            for (int y = Height - 1; y > 0; --y)
             {
-                for (int x = 0; x < this.matrix[y].Length; ++x)
+                for (int x = 0; x < Width; ++x)
                 {
-                    if (this.matrix[y][x] == 0)
+                    if (this.Matrix[y][x] == 0)
                     {
                         skipOut = true;
                         break;
@@ -120,10 +115,10 @@ namespace BlazorTetris.Domain
                 }
 
                 // Take out the offending row
-                this.matrix = this.matrix.Where((source, index) => index != y).ToArray(); // int[] row = this.matrix.splice(y, 1)[0].fill(0);
+                this.Matrix = this.Matrix.Where((source, index) => index != y).ToArray(); // int[] row = this.matrix.splice(y, 1)[0].fill(0);
 
                 // add new empty row to top, shifting everything down
-                this.matrix = this.matrix.Prepend(new int[Width]).ToArray(); // this.matrix.unshift(row); 
+                this.Matrix = this.Matrix.Prepend(new int[Width]).ToArray(); // this.matrix.unshift(row); 
                 ++y;
 
                 score += rowCount * 10;

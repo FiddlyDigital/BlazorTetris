@@ -8,69 +8,46 @@
 <PageTitle>Blazor Tetris</PageTitle>
 <h3>Blazor Tetris</h3>
 
-@if (player != null)
+@if (tetronimo != null)
 {
-    <div id="score">@player.score</div>
+    <div id="score">@tetronimo.Score</div>
 }
 
-<BECanvas Width="240" Height="400" @ref="_canvasReference"></BECanvas>
+<BECanvas Width="240" Height="400" @ref="canvasReference"></BECanvas>
 
 @code {
-    BECanvasComponent _canvasReference = null;
-    Canvas2DContext _outputCanvasContext;
+    BECanvasComponent canvasReference = null;
+    Canvas2DContext outputCanvasContext;
+
     private Arena arena;
-    private Player player;
+    private string[] colors = ["purple", "yellow", "orange", "blue", "aqua", "green", "red"];
     private int dropCounter = 0;
     private int dropInterval = 1000;
     private int lastTime = 0;
-    private string[] colors = ["purple", "yellow", "orange", "blue", "aqua", "green", "red"];
+    private Tetronimo tetronimo;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender){
+        if (!firstRender)
+        {
             return;
         }
 
-        _outputCanvasContext = await _canvasReference.CreateCanvas2DAsync();
-        await _outputCanvasContext.ScaleAsync(20, 20);
+        this.outputCanvasContext = await this.canvasReference.CreateCanvas2DAsync();
+        await this.outputCanvasContext.ScaleAsync(20, 20);
 
-        arena = new Arena();
-        player = new Player(arena);
-        this.player.reset();
+        this.arena = new Arena();
+        this.tetronimo = new Tetronimo(arena);
+        this.tetronimo.Reset();
 
         await JsRuntime.InvokeAsync<object>("initGame", DotNetObjectReference.Create(this));
     }
 
-
-    private async ValueTask clear()
-    {
-        await _outputCanvasContext.SetFillStyleAsync("#000");
-        await _outputCanvasContext.FillRectAsync(0, 0, this._canvasReference.Width, this._canvasReference.Height);
-    }
-
-    private async ValueTask draw()
-    {
-        await this.clear();
-        await this.drawMatrix(this.arena.matrix, new Point(0, 0));
-        await this.drawMatrix(this.player.matrix, this.player.pos);
-    }
-
-    private async ValueTask drawMatrix(int[][] matrix, Point offset)
-    {
-        for(int y = 0; y < matrix.Length; y++)
-        {
-            for(int x = 0; x < matrix[y].Length; x++)
-            {
-                int val = matrix[y][x];
-                if (val > 0)
-                {
-                    await _outputCanvasContext.SetFillStyleAsync(colors[val - 1]);
-                    await _outputCanvasContext.FillRectAsync(x + offset.X, y + offset.Y, 1, 1);
-                }
-            }
-        }
-    }
-
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="dtime"></param>
+    /// <returns></returns>
     [JSInvokable]
     public async ValueTask GameLoop(double dtime = 0)
     {
@@ -81,13 +58,18 @@
         this.dropCounter += timeDelta;
         if (this.dropCounter >= this.dropInterval)
         {
-            this.player.drop();
+            this.tetronimo.DropOneRow();
             this.dropCounter = 0;
         }
 
-        await this.draw();
+        await this.DrawArenaAndTetronimo();
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
     [JSInvokable]
     public async ValueTask KeyPressed(string key)
     {
@@ -95,28 +77,57 @@
         {
             case "W": // W
             case "w": // W
-                this.player.move(-1);
+                this.tetronimo.Move(-1);
                 break;
             case "S": // Down
             case "s": // S
-                this.player.drop();
+                this.tetronimo.DropOneRow();
                 break;
             case "A": // Turn Left
             case "a": // A
-                this.player.move(-1);
+                this.tetronimo.Move(-1);
                 break;
             case "D": // Right
             case "d": // D
-                this.player.move(1);
+                this.tetronimo.Move(1);
                 break;
             case "Q": // Q
             case "q":
-                this.player.rotate(-1);
+                this.tetronimo.Rotate(-1);
                 break;
             case "E": // E
             case "e":
-                this.player.rotate(1);
+                this.tetronimo.Rotate(1);
                 break;
+        }
+    }
+
+    private async ValueTask clearCanvas()
+    {
+        await this.outputCanvasContext.SetFillStyleAsync("#000");
+        await this.outputCanvasContext.FillRectAsync(0, 0, this.canvasReference.Width, this.canvasReference.Height);
+    }
+
+    private async ValueTask DrawArenaAndTetronimo()
+    {
+        await this.clearCanvas();
+        await this.DrawMatrix(this.arena.Matrix, new Point(0, 0));
+        await this.DrawMatrix(this.tetronimo.Matrix, this.tetronimo.TetronimoPosition);
+    }
+
+    private async ValueTask DrawMatrix(int[][] matrix, Point offset)
+    {
+        for (int y = 0; y < matrix.Length; y++)
+        {
+            for (int x = 0; x < matrix[y].Length; x++)
+            {
+                int val = matrix[y][x];
+                if (val > 0)
+                {
+                    await this.outputCanvasContext.SetFillStyleAsync(colors[val - 1]);
+                    await this.outputCanvasContext.FillRectAsync(x + offset.X, y + offset.Y, 1, 1);
+                }
+            }
         }
     }
 }
